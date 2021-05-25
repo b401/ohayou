@@ -113,10 +113,8 @@ class DomainWorker:
 
     # https://stackoverflow.com/questions/30862099/how-can-i-get-certificate-issuer-information-in-python
     def check_ssl_hostname(self):
-        print(f"checking https {self.domain}")
         if self.connection["https"] == False:
             del(self.flags["certificate"])
-            print("nothin httpsfucking off")
             return
 
         # SEE COMMIT: https://github.com/python/cpython/commit/49fdf118aeda891401d638ac32296c7d55d54678
@@ -181,19 +179,16 @@ class DomainWorker:
             self.check_security_text(),
             self.grab_banner()
         )
-        print(f"awaiting for domain {self.domain}")
         td.join()
         dq.put_nowait(self.flags)
             
 
 async def get_all_queue_items(q,filehandler):
-    print("alright everything here.")
     items = []
     while True:
         try:
             items.append(q.get_nowait())
         except asyncio.QueueEmpty:
-            print("saving to file.")
             json.dump(items,filehandler,indent=4)
             break
 
@@ -214,9 +209,7 @@ async def close_reqhandler():
 async def worker(name,queue):
     while True:
         item = await queue.get()
-        print(f"[#] Working on {item}")
         await DomainWorker(item).run()
-        print(f"[#] done {item}")
         queue.task_done()
 
 async def main():
@@ -241,7 +234,6 @@ async def main():
                         task = asyncio.create_task(worker(f"Worker-{i}",queue))
                         tasks.append(task)
                     await queue.join()
-                    print("queue is done")
                     for task in tasks:
                         task.cancel()
                     await asyncio.gather(*tasks, return_exceptions=True)
