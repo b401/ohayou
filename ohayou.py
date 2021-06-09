@@ -220,7 +220,7 @@ async def main():
     queuesize = 100
     queue = asyncio.queues.Queue(maxsize=queuesize)
     start = datetime.now()
-    print("[x] Starting execution at: {}".format(start))
+    print(f"[x] Starting execution at: {start}")
     with open(input_file, 'r') as domainlist:
         with open(output_file, "a+") as fh:
             for domain in domainlist:
@@ -251,9 +251,9 @@ async def main():
             await get_all_queue_items(dq,fh)
     await close_reqhandler()
     end = datetime.now()
-    print("Ending execution at: {}".format(end))
+    print(f"Ending execution at: {end}")
     diff = end-start
-    print("Diff: {}".format(diff.total_seconds()))
+    print(f"Diff: {diff.total_seconds()}")
 
 
 
